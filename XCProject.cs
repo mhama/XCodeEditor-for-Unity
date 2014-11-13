@@ -943,10 +943,9 @@ namespace UnityEditor.XCodeEditor
 				this.AddFile( completePath, frameworkGroup, "SDKROOT", true, isWeak );
 			}
 			
-			Debug.Log( "Adding files..." );
+			Debug.Log( "Adding files: " + mod + " / " + mod.files );
 			foreach( string filePath in mod.files ) {
 				string absoluteFilePath = System.IO.Path.Combine( mod.path, filePath );
-
 
 				if( filePath.EndsWith(".framework") )
 					this.AddFile( absoluteFilePath, frameworkGroup, "GROUP", true, false);
@@ -954,43 +953,46 @@ namespace UnityEditor.XCodeEditor
 					this.AddFile( absoluteFilePath, modGroup );
 			}
 			
-			Debug.Log( "Adding folders..." );
+            Debug.Log( "Adding folders: " + mod.folders );
 			foreach( string folderPath in mod.folders ) {
 				string absoluteFolderPath = System.IO.Path.Combine( mod.path, folderPath );
 				this.AddFolder( absoluteFolderPath, modGroup, (string[])mod.excludes.ToArray( typeof(string) ) );
 			}
 			
-			Debug.Log( "Adding headerpaths..." );
+            Debug.Log( "Adding headerpaths: " + mod.headerpaths );
 			foreach( string headerpath in mod.headerpaths ) {
 				string absoluteHeaderPath = System.IO.Path.Combine( mod.path, headerpath );
 				this.AddHeaderSearchPaths( absoluteHeaderPath );
 			}
 
-			Debug.Log( "Configure build settings..." );
+			Debug.Log( "Configure build settings: " + mod.buildSettings );
 			Hashtable buildSettings = mod.buildSettings;
-			if( buildSettings.ContainsKey("OTHER_LDFLAGS") )
+			if( buildSettings != null )
 			{
-				Debug.Log( "    Adding other linker flags..." );
-				ArrayList otherLinkerFlags = (ArrayList) buildSettings["OTHER_LDFLAGS"];
-				foreach( string linker in otherLinkerFlags ) 
+				if( buildSettings.ContainsKey("OTHER_LDFLAGS") )
 				{
-					string _linker = linker;
-					if( !_linker.StartsWith("-") )
-						_linker = "-" + _linker;
-					this.AddOtherLDFlags( _linker );
+					Debug.Log( "    Adding other linker flags..." );
+					ArrayList otherLinkerFlags = (ArrayList) buildSettings["OTHER_LDFLAGS"];
+					foreach( string linker in otherLinkerFlags ) 
+					{
+						string _linker = linker;
+						if( !_linker.StartsWith("-") )
+							_linker = "-" + _linker;
+						this.AddOtherLDFlags( _linker );
+					}
 				}
-			}
 
-			if( buildSettings.ContainsKey("GCC_ENABLE_CPP_EXCEPTIONS") )
-			{
-				Debug.Log( "    GCC_ENABLE_CPP_EXCEPTIONS = " + buildSettings["GCC_ENABLE_CPP_EXCEPTIONS"] );
-				this.GccEnableCppExceptions( (string) buildSettings["GCC_ENABLE_CPP_EXCEPTIONS"] );
-			}
+				if( buildSettings.ContainsKey("GCC_ENABLE_CPP_EXCEPTIONS") )
+				{
+					Debug.Log( "    GCC_ENABLE_CPP_EXCEPTIONS = " + buildSettings["GCC_ENABLE_CPP_EXCEPTIONS"] );
+					this.GccEnableCppExceptions( (string) buildSettings["GCC_ENABLE_CPP_EXCEPTIONS"] );
+				}
 
-			if( buildSettings.ContainsKey("GCC_ENABLE_OBJC_EXCEPTIONS") )
-			{
-				Debug.Log( "    GCC_ENABLE_OBJC_EXCEPTIONS = " + buildSettings["GCC_ENABLE_OBJC_EXCEPTIONS"] );
-				this.GccEnableObjCExceptions( (string) buildSettings["GCC_ENABLE_OBJC_EXCEPTIONS"] );
+				if( buildSettings.ContainsKey("GCC_ENABLE_OBJC_EXCEPTIONS") )
+				{
+					Debug.Log( "    GCC_ENABLE_OBJC_EXCEPTIONS = " + buildSettings["GCC_ENABLE_OBJC_EXCEPTIONS"] );
+					this.GccEnableObjCExceptions( (string) buildSettings["GCC_ENABLE_OBJC_EXCEPTIONS"] );
+				}
 			}
 
 			this.Consolidate();
