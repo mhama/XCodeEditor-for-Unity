@@ -547,7 +547,6 @@ namespace UnityEditor.XCodeEditor
 				}
 
 //				special_folders = ['.bundle', '.framework', '.xcodeproj']	
-				Debug.Log( "DIR: " + directory );
 				if( directory.EndsWith( ".bundle" ) ) {
 					// Treath it like a file and copy even if not recursive
 					Debug.LogWarning( "This is a special folder: " + directory );
@@ -557,7 +556,6 @@ namespace UnityEditor.XCodeEditor
 				}
 				
 				if( recursive ) {
-					Debug.Log( "recursive" );
 					AddFolder( directory, newGroup, exclude, recursive, createBuildFile );
 				}
 			}
@@ -933,7 +931,6 @@ namespace UnityEditor.XCodeEditor
 				string completeLibPath = System.IO.Path.Combine( "usr/lib", libRef.filePath );
 				this.AddFile( completeLibPath, modGroup, "SDKROOT", true, libRef.isWeak );
 			}
-			
 			Debug.Log( "Adding frameworks..." );
 			PBXGroup frameworkGroup = this.GetGroup( "Frameworks" );
 			foreach( string framework in mod.frameworks ) {
@@ -942,8 +939,7 @@ namespace UnityEditor.XCodeEditor
 				string completePath = System.IO.Path.Combine( "System/Library/Frameworks", filename[0] );
 				this.AddFile( completePath, frameworkGroup, "SDKROOT", true, isWeak );
 			}
-			
-			Debug.Log( "Adding files: " + mod + " / " + mod.files );
+			Debug.Log( "Adding files: " + mod.path + " / " + XMiniJSON.jsonEncode(mod.files) );
 			foreach( string filePath in mod.files ) {
 				string absoluteFilePath = System.IO.Path.Combine( mod.path, filePath );
 
@@ -952,28 +948,25 @@ namespace UnityEditor.XCodeEditor
 				else
 					this.AddFile( absoluteFilePath, modGroup );
 			}
-			
-            Debug.Log( "Adding folders: " + mod.folders );
+			Debug.Log( "Adding folders: " + XMiniJSON.jsonEncode(mod.folders) );
 			foreach( string folderPath in mod.folders ) {
 				string absoluteFolderPath = System.IO.Path.Combine( mod.path, folderPath );
 				this.AddFolder( absoluteFolderPath, modGroup, (string[])mod.excludes.ToArray( typeof(string) ) );
 			}
-			
-            Debug.Log( "Adding headerpaths: " + mod.headerpaths );
+			Debug.Log( "Adding headerpaths: " + XMiniJSON.jsonEncode(mod.headerpaths) );
 			foreach( string headerpath in mod.headerpaths ) {
 				string absoluteHeaderPath = System.IO.Path.Combine( mod.path, headerpath );
 				this.AddHeaderSearchPaths( absoluteHeaderPath );
 			}
-
-			Debug.Log( "Configure build settings: " + mod.buildSettings );
+			Debug.Log( "Configure build settings: " + XMiniJSON.jsonEncode(mod.buildSettings) );
 			Hashtable buildSettings = mod.buildSettings;
 			if( buildSettings != null )
 			{
 				if( buildSettings.ContainsKey("OTHER_LDFLAGS") )
 				{
-					Debug.Log( "    Adding other linker flags..." );
+					Debug.Log( "Adding other linker flags..." );
 					ArrayList otherLinkerFlags = (ArrayList) buildSettings["OTHER_LDFLAGS"];
-					foreach( string linker in otherLinkerFlags ) 
+					foreach( string linker in otherLinkerFlags )
 					{
 						string _linker = linker;
 						if( !_linker.StartsWith("-") )

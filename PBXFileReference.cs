@@ -43,6 +43,7 @@ namespace UnityEditor.XCodeEditor
 			{ ".txt", "text" },
 			{ ".xcodeproj", "wrapper.pb-project" },
 			{ ".xib", "file.xib" },
+			{ ".storyboard", "file.storyboard" },
 			{ ".strings", "text.plist.strings" },
 			{ ".bundle", "wrapper.plug-in" },
 			{ ".dylib", "compiled.mach-o.dylib" }
@@ -67,10 +68,11 @@ namespace UnityEditor.XCodeEditor
 			{ ".txt", "PBXResourcesBuildPhase" },
 			{ ".xcodeproj", null },
 			{ ".xib", "PBXResourcesBuildPhase" },
+			{ ".storyboard", "PBXResourcesBuildPhase" },
 			{ ".strings", "PBXResourcesBuildPhase" },
 			{ ".bundle", "PBXResourcesBuildPhase" },
 			{ ".dylib", "PBXFrameworksBuildPhase" }
-    	};
+		};
 		
 		public PBXFileReference( string guid, PBXDictionary dictionary ) : base( guid, dictionary )
 		{
